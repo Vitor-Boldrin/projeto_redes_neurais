@@ -1,0 +1,35 @@
+services:
+  nn-mnist:
+    build: .
+    image: projeto-redes-neurais:local
+    container_name: projeto-redes-neurais
+
+    ports:
+      - "8888:8888"
+
+    volumes:
+      - .:/workspace   # pasta do projeto (código, notebooks, CSVs) espelhada dentro do container
+
+    working_dir: /workspace
+
+    # ==========================================================================
+    # RECURSOS DO CONTAINER (CPU / RAM)
+    # É AQUI que cada pessoa do grupo ajusta os limites de acordo com o próprio
+    # notebook: cpus / mem_limit / mem_reservation são atributos padrão do
+    # Compose e valem para "docker compose up" comum (não precisam de Swarm).
+    # Os valores vêm de variáveis de ambiente (arquivo .env, que NÃO é
+    # versionado no git - veja .env.example), com um valor padrão (depois do
+    # ":-") caso a variável não exista.
+    # ==========================================================================
+    cpus: "${CPU_LIMIT:-2}"
+    mem_limit: "${MEM_LIMIT:-2g}"
+    mem_reservation: "${MEM_RESERVATION:-1g}"
+
+    # --------------------------------------------------------------------
+    # GPU (OPCIONAL - não necessária para este projeto; ver "E a placa de
+    # vídeo?" no README). Requer Docker Compose 2.30+ e, no host, os
+    # drivers NVIDIA (+ NVIDIA Container Toolkit no Linux; no Windows, via
+    # WSL2). Para usar todas as GPUs disponíveis, descomente:
+    #
+    gpus: all
+    # --------------------------------------------------------------------

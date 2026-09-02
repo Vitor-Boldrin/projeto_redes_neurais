@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Configuração local de cada integrante (não commitar)
+.env
+
+# Ambiente virtual, caso alguém crie um fora do Docker
+.venv/
+venv/
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
