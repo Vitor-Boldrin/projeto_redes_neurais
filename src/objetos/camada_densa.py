@@ -21,7 +21,4 @@ class CamadaDensa:
     def _foward(self,entrada:np.array):
         return self.Ativacao.calcula(self.parametros,entrada)
 
-    def _retorna_parametros(self):
-        return self.parametros
-
     
