@@ -1,4 +1,4 @@
-from funcoes import _sigmoid
+from objetos import Sigmoid
 import numpy as np
 
 class CamadaDensa:
@@ -10,11 +10,16 @@ class CamadaDensa:
         de ativação e retornar isso como a saída
         possui o atributo:
             parametros (np.array mxn)
+        métodos:
+            _foward (np.array mx1)->float recebe uma entrada e
+            multiplica pelos parametros. Depois aplica
+            a função de ativação e retorna o valor
     """
-    def __init__(self,tamanhoEntrada:int,tamanhoSaida:int,funcaoAtivacao='sigmoid'):
-        self._numero_camadas = np.random.rand(tamanhoSaida, tamanhoEntrada)
+    def __init__(self,tamanho_entrada:int,tamanho_saida:int,Ativacao=Sigmoid):
+        self.parametros = np.random.rand(tamanho_saida, tamanho_entrada)
+        self.Ativacao = Ativacao
 
     def _foward(self,entrada:np.array):
-        
+        return self.Ativacao.calcula(self.parametros,entrada)
 
     
