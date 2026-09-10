@@ -17,5 +17,5 @@ class Sigmoid:
         self.saida = 0.0
 
     def calcula(self,parametros:np.array,entrada:np.array):
-        self.saida = 1/(1+np.e**(np.dot(parametros,entrada)))
+        self.saida = 1/(1+np.e**(-np.dot(parametros,entrada)))
         return self.saida
