@@ -30,5 +30,6 @@ class RedeNeural:
 
         for camada in self.camadas[1:]:
             saida = camada._foward(saida)
-            return saida
+
+        return saida
         

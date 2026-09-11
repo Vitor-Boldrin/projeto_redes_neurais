@@ -18,6 +18,6 @@ class Sigmoid(FuncaoAtivacao):
         self.saida = 0.0
 
     def _calcula(self, entrada: np.array):
-        # np.exp() aplica o e^-x a cada elemento do array automaticamente
+        # calcula a softmax
         self.saida = 1 / (1 + np.exp(-entrada))
         return self.saida
