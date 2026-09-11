@@ -1,9 +1,9 @@
 import numpy as np
 from .funcao_ativacao import FuncaoAtivacao
 
-class Sigmoid(FuncaoAtivacao):
+class Softmax(FuncaoAtivacao):
     """
-    Objeto da função sigmoid, dessa maneira conseguimos
+    Objeto da função softmax, dessa maneira conseguimos
     generalizar as funções de ativação assim como guardar
     na memória o valor dela para posteriormente utilizar
     no backpropagation
@@ -18,6 +18,9 @@ class Sigmoid(FuncaoAtivacao):
         self.saida = 0.0
 
     def _calcula(self, entrada: np.array):
-        # np.exp() aplica o e^-x a cada elemento do array automaticamente
-        self.saida = 1 / (1 + np.exp(-entrada))
+
+        exponenciais = np.exp(entrada)
+
+        self.saida = exponenciais / np.sum(exponenciais, axis=-1, keepdims=True)
+        
         return self.saida

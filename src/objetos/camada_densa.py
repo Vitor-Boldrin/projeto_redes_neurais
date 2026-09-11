@@ -21,6 +21,6 @@ class CamadaDensa:
         self.Ativacao = Ativacao
 
     def _foward(self,entrada:np.array):
-        return self.Ativacao.calcula(self.parametros,entrada)
+        return self.Ativacao._calcula(   np.matmul(self.parametros, entrada)   )
 
     
