@@ -16,7 +16,7 @@ class CamadaDensa:
     """
     def __init__(self,tamanho_entrada:int,tamanho_saida:int,Ativacao):
         self.parametros = np.random.rand(tamanho_saida, tamanho_entrada)
-        self.dimensao_entranda = tamanho_entrada
+        self.dimensao_entrada = tamanho_entrada
         self.dimensao_saida = tamanho_saida
         self.Ativacao = Ativacao
 
