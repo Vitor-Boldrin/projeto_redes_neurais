@@ -21,6 +21,6 @@ class Softmax(FuncaoAtivacao):
 
         exponenciais = np.exp(entrada)
 
-        self.saida = exponenciais / np.sum(exponenciais, axis=-1, keepdims=True)
+        self.saida = exponenciais / np.sum(exponenciais, axis=0, keepdims=True) #faz os cálculos com as linhas
         
         return self.saida
