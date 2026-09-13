@@ -1,5 +1,8 @@
 import numpy as np
 
+# TO DO:
+# [ ] Implementar o _backward para a implementação do backpropagation
+
 class CamadaDensa:
     """
         Objeto da camada densa de uma rede neural, seu
@@ -55,5 +58,4 @@ class CamadaDensa:
             
         self.saida = self.Ativacao._calcula(soma) # funcao de ativacao e guarda a saida
         return self.saida
-
     

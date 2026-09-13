@@ -1,5 +1,15 @@
 from .camada_densa import CamadaDensa
 import numpy as np
+from .dados import Dados
+
+# TO DO:
+# [X] função _avalia que calcula a passagem de uma amostra $h_{\theta}(x)$
+# [ ] função _calculo_custo computa o custo de 1 amostra
+#     [ ] criar a classe de custo da Regressão Logística
+#     [ ] avaliar a possibilidade de vetorização
+#     [ ] terminar a função _calcula_custo
+# [ ] função _calculo_perda que calcula o custo de todos os dados de treinamento e tira a media
+# [ ] implementar o backpropagation
 
 class RedeNeural:
     def __init__(self,camadas):
@@ -32,4 +42,9 @@ class RedeNeural:
             saida = camada._foward(saida)
 
         return saida
-        
+
+    
+    def _calcula_custo(self,Dados_calculo):
+        # testa se os dados são a nossa bélissima classa
+        if not isinstance(Dados_calculo, Dados):
+            raise TypeError(f"Os dados devem ser do tipo Dados. Foi recebido: {type(Dados_calculo).__name__}")
