@@ -9,7 +9,8 @@ class FuncaoAtivacao(ABC):
     e os métodos _foward e _backward
     """
     def __init__(self):
-        self.saida = 0.0
+        self.valor_foward = 0.0
+        self.valor_backward = 0.0
 
     @abstractmethod
     def _foward(self, entrada: np.array):

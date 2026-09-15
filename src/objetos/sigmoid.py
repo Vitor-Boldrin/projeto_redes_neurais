@@ -15,9 +15,26 @@ class Sigmoid(FuncaoAtivacao):
     """
 
     def __init__(self):
-        self.saida = 0.0
+        self.valor_foward = 0.0
+        self.valor_backward = 0.0
 
     def _foward(self, entrada: np.array):
+
+        # também controlamos aqui
+        entrada_estavel = np.clip(entrada, -1000, 1000)
+
         # calcula a softmax
-        self.saida = 1 / (1 + np.exp(-entrada))
-        return self.saida
+        self.valor_foward = 1 / (1 + np.exp(-entrada))
+        return self.valor_foward
+
+    def _backward(self, entrada: np.array):
+        """
+        A derivada dela é sigmoid (1 - sigmoid) do valor calculado no foward
+        """
+        derivada = self.valor_foward * (1.0 - self.valor_foward)
+        
+        # a saida é a entrada multiplicação elemento a elemento segundo nosso amigo florindo
+        self.valor_backward = entrada * derivada
+        
+        return self.valor_backward
+

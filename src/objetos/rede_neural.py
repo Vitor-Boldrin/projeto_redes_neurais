@@ -13,7 +13,7 @@ from funcoes.custo import FuncaoDeCusto, EntropiaCruzada
 
 class RedeNeural:
     def __init__(self, camadas, funcao_de_custo='entropia_cruzada'):
-        # Mapeamos as strings para as CLASSES (não instanciadas ainda)
+        # dicionário de funcao de custo (para quando passar uma string)
         CLASSES_DE_CUSTO = {
             'entropia_cruzada': EntropiaCruzada
         }
@@ -28,7 +28,7 @@ class RedeNeural:
                 if camadas[c].dimensao_saida != camadas[c+1].dimensao_entrada:
                     raise TypeError("As entradas e saidas das redes não batem")
 
-        # TRATAMENTO DO OBJETO DE CUSTO
+        # trata a função de custo
         if isinstance(funcao_de_custo, str):
             if funcao_de_custo in CLASSES_DE_CUSTO:
                 self._funcao_de_custo = CLASSES_DE_CUSTO[funcao_de_custo]()
