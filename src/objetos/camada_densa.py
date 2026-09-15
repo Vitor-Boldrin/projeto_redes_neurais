@@ -56,6 +56,6 @@ class CamadaDensa:
         else:
             soma = np.matmul(self.parametros, entrada)
             
-        self.saida = self.Ativacao._calcula(soma) # funcao de ativacao e guarda a saida
+        self.saida = self.Ativacao._foward(soma) # funcao de ativacao e guarda a saida
         return self.saida
     

@@ -21,7 +21,7 @@ class Sigmoid(FuncaoAtivacao):
     def _foward(self, entrada: np.array):
 
         # também controlamos aqui
-        entrada_estavel = np.clip(entrada, -1000, 1000)
+        entrada_estavel = np.clip(entrada, -400, 400)
 
         # calcula a softmax
         self.valor_foward = 1 / (1 + np.exp(-entrada))

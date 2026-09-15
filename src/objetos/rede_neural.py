@@ -1,7 +1,8 @@
 from .camada_densa import CamadaDensa
 import numpy as np
 from .dados import Dados
-from funcoes.custo import FuncaoDeCusto, EntropiaCruzada 
+from .entropia_cruzada import EntropiaCruzada 
+from .funcao_de_custo import FuncaoDeCusto
 
 # TO DO:
 # [X] função _avalia que calcula a passagem de uma amostra $h_{\theta}(x)$

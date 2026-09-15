@@ -9,6 +9,11 @@ import random
 # [ ] Implementar método K-Fold
 # [ ] Implementar método Bootstrap
 
+# RECADO DO VITOR: A rede está MUITO vetorizada, então a entrada da rede é uma matriz.
+# se vamos treinar (aqui temos 10 classes) e digamos que m = 100 (numero de dados de treinamento)
+# então Y = matriz 10x100 {classes}x{m}
+# e X = matriz 400x100 
+
 class Dados():
     """
     A classe Dados armazena e manipula os nossos dados.

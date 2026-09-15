@@ -1,7 +1,8 @@
 import numpy as np
+from .funcao_de_custo import FuncaoDeCusto
 
 
-class FuncaoDeCusto():
+class EntropiaCruzada(FuncaoDeCusto):
     """
     Classe da entropia cruzada para o cálculo de n classes.
     IMPORTATE: Essa função já espera estar recebendo uma matriz dos y reais e calculado.
