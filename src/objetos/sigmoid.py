@@ -17,7 +17,7 @@ class Sigmoid(FuncaoAtivacao):
     def __init__(self):
         self.saida = 0.0
 
-    def _calcula(self, entrada: np.array):
+    def _foward(self, entrada: np.array):
         # calcula a softmax
         self.saida = 1 / (1 + np.exp(-entrada))
         return self.saida

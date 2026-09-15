@@ -17,7 +17,7 @@ class Softmax(FuncaoAtivacao):
     def __init__(self):
         self.saida = 0.0
 
-    def _calcula(self, entrada: np.array):
+    def _foward(self, entrada: np.array):
 
         exponenciais = np.exp(entrada)
 

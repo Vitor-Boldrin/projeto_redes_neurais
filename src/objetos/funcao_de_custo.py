@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 
-class FuncaoAtivacao(ABC):
+class FuncaoDeCusto(ABC):
     """
-    Classe mãe para todas as funções de ativação. Todas
+    Classe mãe para todas as funções de custo. Todas
     DEVEM herdar dessa classe forçando ter o atributo saida
     e os métodos _foward e _backward
     """
