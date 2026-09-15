@@ -1,6 +1,6 @@
 import numpy as np
 
-def categorical_cross_entropy(y_real:np.array, y_pred:np.array):
+def entropia_cruzada(y_real:np.array, y_pred:np.array):
     """
     Função da entropia cruzada para o cálculo de n classes.
     IMPORTATE: Essa função já espera estar recebendo uma matriz dos y reais e calculado.
