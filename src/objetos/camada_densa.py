@@ -25,8 +25,8 @@ class CamadaDensa:
                 }
 
         self.conter_bias = conter_bias
-        self.valor_foward = None
-        self.valor_backward = None
+        self.valor_foward = 0.0
+        self.valor_backward = 0.0
         
         # dimensões
         self.dimensao_entrada = tamanho_entrada 
@@ -76,33 +76,35 @@ class CamadaDensa:
 
     def _backward(self, entrada: np.array):
         """
+        Fiz um pouco diferente dos slides para ficar mais modular
+
         Seja Z = theta^T*x,
         L a função de custo,
         e A = g(Z) com g sendo a função de ativação
 
-        o backward aqui já recebe delL/delA=entrada [NÃO CONFUDIR, É O GRADIENTE DO ERRO DA CAMADA SEGUINTE DELA]
+        o backward aqui já recebe delJ/delA=entrada [NÃO CONFUDIR, É O GRADIENTE DO ERRO DA CAMADA SEGUINTE DELA]
 
-        delL/delZ = delL/delA delA/delZ
+        delJ/delZ = delJ/delA delA/delZ
 
         sabemos que delA/delZ = g'(Z) = self.funcao_de_ativacao._backward(entrada)
 
-        então conseguimos calcular delL/delZ, com ele
+        então conseguimos calcular delJ/delZ, com ele
 
         queremos agora (o sonhado gradiente)
 
-        delL/delTheta = delL/delZ delZ/delTheta
+        delJ/delTheta = delJ/delZ delZ/delTheta
 
         já que Z = Theta*X^T -> delZ/delTheta = X = self.entrada_epoca [é o valor que foi passado por aqui durante o _foward]
 
         daí 
 
-        delL/delTheta = 1/m delL/delZ * X^T          -> precisamos dividir pelo número de amostras e fica X^T para bater certinho as dimensões
+        delJ/delTheta = 1/m delJ/delZ * X^T          -> precisamos dividir pelo número de amostras e fica X^T para bater certinho as dimensões
 
-        com isso calculamos também delL/delTheta = self.d_parametros
+        com isso calculamos também delJ/delTheta = self.d_parametros
 
         agora passando o erro dessa camada para a anterior [completando o trenzinho do _backward]
 
-        delL/delX = delL/delZ delZ/delX
+        delJ/delX = delJ/delZ delZ/delX
 
         novamente, como Z = Theta^T*X então delZ/delX = Theta
         """
@@ -125,7 +127,7 @@ class CamadaDensa:
             
         return self.valor_backward
 
-    def atualiza_parametros(self, taxa_aprendizado: float):
+    def _atualiza_parametros(self, taxa_aprendizado: float):
         """
         Depois de fazer o backpropagation damos um passo do gradiente
         """

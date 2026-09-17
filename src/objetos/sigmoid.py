@@ -24,12 +24,12 @@ class Sigmoid(FuncaoAtivacao):
         entrada_estavel = np.clip(entrada, -400, 400)
 
         # calcula a softmax
-        self.valor_foward = 1 / (1 + np.exp(-entrada))
+        self.valor_foward = 1 / (1 + np.exp(-entrada_estavel))
         return self.valor_foward
 
     def _backward(self, entrada: np.array):
         """
-        A derivada dela é sigmoid (1 - sigmoid) do valor calculado no foward
+        A derivada dela é sigmoid (1 - sigmoid) do valor calculado no foward, ou seja, o valor que ela devolveu quando rodou a rede
         """
         derivada = self.valor_foward * (1.0 - self.valor_foward)
         

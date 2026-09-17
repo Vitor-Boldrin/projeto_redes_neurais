@@ -6,7 +6,7 @@ from .funcao_de_custo import FuncaoDeCusto
 
 # TO DO:
 # [X] função _avalia que calcula a passagem de uma amostra $h_{\theta}(x)$
-# [ ] função _calculo_custo computa o custo de 1 amostra
+# [X] função _calculo_custo computa o custo de 1 amostra
 #     [X] criar a classe de custo da Regressão Logística VIROU UMA CLASSE
 #     [X] avaliar a possibilidade de vetorização ESTÁ VETORIZADA
 #     [X] terminar a função _calcula_custo
@@ -70,3 +70,36 @@ class RedeNeural:
         self.valor_custo = self._funcao_de_custo.forward(y_real, y_pred)
 
         return self.valor_custo
+
+    def _backpropagation(self, y_real: np.array, y_pred: np.array, taxa_aprendizado: float):
+        """
+        Faz o backpropagation uma vez e depois atualiza os thetas das camadas
+        """
+        # calcula os dados, passa eles pela rede
+        backward = self._funcao_de_custo._backward(y_real, y_pred)
+
+        # iterando de tras para frente
+        for camada in range(len(self.camadas) - 1, -1, -1):
+            backward = camada._backward(backward)
+
+        # atualiza os parametros
+        for camada in self.camadas:
+            camada._atualiza_parametros(taxa_aprendizado)
+
+    def treinar(self, X: np.array, y_real: np.array, epocas: int, taxa_aprendizado: float):
+        """
+        Junta as funções e faz o treinamento
+        define as épocas que são quantas vezes será iterado
+        IMPORTANTE avalia a rede antes de treinar, para atualizar todos os valores de foward na rede inteira
+        TO DO
+        [ ] GERAR LOGS DE TREINAMENTO
+        """
+        for epoca in range(epocas):
+            # roda a rede
+            y_pred = self._avalia(X)
+
+            # calcula o custo
+            custo = self._calcula_custo(y_real, y_pred)
+
+            # faz o backpropagation (que já atualiza os parâmetros)
+            self._backpropagation(y_real, y_pred, taxa_aprendizado)
