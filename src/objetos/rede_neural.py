@@ -107,14 +107,24 @@ class RedeNeural:
         for camada in self.camadas:
             camada._atualiza_parametros(taxa_aprendizado)
 
-    def treinar(self, X: np.array, y_real: np.array, epocas: int, taxa_aprendizado: float):
+    def treinar(self, X: np.array, y_real: np.array, epocas: int, taxa_aprendizado: float, regularizador_lambda = None):
         """
         Junta as funções e faz o treinamento
         define as épocas que são quantas vezes será iterado
-        IMPORTANTE avalia a rede antes de treinar, para atualizar todos os valores de foward na rede inteira
+        IMPORTANTE avalia a rede antes de treinar, para atualizar todos os valores de foward na rede inteira.
+
+        Aqui a gente pode passar o lambda da regularização também
+
         TO DO
         [ ] GERAR LOGS DE TREINAMENTO
         """
+        self.regularizador_lambda = regularizador_lambda
+
+        # se foi passado regularizador, passa o lambda para as camadas, pois vão ser utilizado no backpropagation
+        if not(self.regularizador_lambda is None):
+            for c in self.camadas:
+                c.regularizador_lambda = self.regularizador_lambda
+
         for epoca in range(epocas):
             # roda a rede
             y_pred = self._avalia(X)
