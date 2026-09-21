@@ -13,7 +13,8 @@ from .funcao_de_custo import FuncaoDeCusto
 # [ ] implementar o backpropagation
 
 class RedeNeural:
-    def __init__(self, camadas, funcao_de_custo='entropia_cruzada'):
+    def __init__(self, camadas, funcao_de_custo='entropia_cruzada', regularizador_lambda = None):
+        self.regularizador_lambda = regularizador_lambda
         # dicionário de funcao de custo (para quando passar uma string)
         CLASSES_DE_CUSTO = {
             'entropia_cruzada': EntropiaCruzada
@@ -28,6 +29,12 @@ class RedeNeural:
             for c in range(len(camadas)-1):
                 if camadas[c].dimensao_saida != camadas[c+1].dimensao_entrada:
                     raise TypeError("As entradas e saidas das redes não batem")
+
+        # se foi passado regularizador, passa o lambda para as camadas, pois vão ser utilizado no backpropagation
+        if not(self.regularizador_lambda is None):
+            for c in camadas:
+                c.regularizador_lambda = self.regularizador_lambda
+
 
         # trata a função de custo
         if isinstance(funcao_de_custo, str):
@@ -65,9 +72,23 @@ class RedeNeural:
         # testa se os dados são a nossa belíssima classe
         # if not isinstance(Dados_calculo, Dados):
         #    raise TypeError(f"Os dados devem ser do tipo Dados. Foi recebido: {type(Dados_calculo).__name__}")
+        valor_regularizacao = 0.0
+
+        # REGULARIZAÇÃO
+        if self.regularizador_lambda is not None:
+            for camada in self.camadas:
+                if camada.conter_bias:
+                    # Ignora a coluna 0 (BIAS) somando do indice 1 em diante
+                    valor_regularizacao += np.sum(camada.parametros[:, 1:] ** 2)
+                else:
+                    valor_regularizacao += np.sum(camada.parametros ** 2)
+            
+            # Depois de somar tudo multiplica por lambda/2M 
+            M = y_real.shape[1]
+            valor_regularizacao = (self.regularizador_lambda / (2 * M)) * valor_regularizacao
 
         # Chama a função de custo de que foi definida
-        self.valor_custo = self._funcao_de_custo.forward(y_real, y_pred)
+        self.valor_custo = self._funcao_de_custo.forward(y_real, y_pred, valor_regularizacao)
 
         return self.valor_custo
 
@@ -79,7 +100,7 @@ class RedeNeural:
         backward = self._funcao_de_custo._backward(y_real, y_pred)
 
         # iterando de tras para frente
-        for camada in range(len(self.camadas) - 1, -1, -1):
+        for camada in reversed(self.camadas):
             backward = camada._backward(backward)
 
         # atualiza os parametros

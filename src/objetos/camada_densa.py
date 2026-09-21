@@ -3,7 +3,7 @@ from .sigmoid import Sigmoid
 from .funcao_ativacao import FuncaoAtivacao
 
 # TO DO:
-# [ ] Implementar o _backward para a implementação do backpropagation
+# [X] Implementar o _backward para a implementação do backpropagation
 
 class CamadaDensa:
     """
@@ -19,7 +19,7 @@ class CamadaDensa:
             multiplica pelos parametros. Depois aplica
             a função de ativação e retorna o valor
     """
-    def __init__(self,tamanho_entrada:int,tamanho_saida:int,funcao_de_ativacao='sigmoid', conter_bias=True):
+    def __init__(self,tamanho_entrada:int,tamanho_saida:int,funcao_de_ativacao='sigmoid', conter_bias=True, regularizador_lambda=None):
         CLASSES_DE_ATIVACAO = {
                     'entropia_cruzada': Sigmoid
                 }
@@ -27,6 +27,7 @@ class CamadaDensa:
         self.conter_bias = conter_bias
         self.valor_foward = 0.0
         self.valor_backward = 0.0
+        self.regularizador_lambda = regularizador_lambda
         
         # dimensões
         self.dimensao_entrada = tamanho_entrada 
@@ -71,7 +72,7 @@ class CamadaDensa:
         else:
             soma = np.matmul(self.parametros, entrada)
             
-        self.valor_foward = self.Ativacao._foward(soma) # funcao de ativacao e guarda a saida
+        self.valor_foward = self.funcao_de_ativacao._foward(soma) # funcao de ativacao e guarda a saida
         return self.valor_foward
 
     def _backward(self, entrada: np.array):
@@ -109,13 +110,28 @@ class CamadaDensa:
         novamente, como Z = Theta^T*X então delZ/delX = Theta
         """
         # 1. Pede para a ativação calcular a derivada dZ a partir de dA
-        delA_delZ = self.Ativacao._backward(entrada)
+        delA_delZ = self.funcao_de_ativacao._backward(entrada)
         
         # Número de amostras
         m = self.entrada_epoca.shape[1]
         
         # Calcula o gradiente dos parâmetros (DeJ/DelTheta)
         self.d_parametros = (1 / m) * np.dot(delA_delZ, self.entrada_epoca.T)
+
+        # se nós temos regularizador a função fica W = W - alfa * (dW + lambda/m * W)
+        if not(self.regularizador_lambda is None):
+            # Cria uma matriz de zeros no exato formato de self.parametros para fazer as operações
+            grad_l2 = np.zeros_like(self.parametros)
+            
+            if self.conter_bias: # NÃO REGULARIZAMOS O BIAS!!!!
+                # Como o bias é a coluna 0 aplicamos a regularização apenas nas colunas de 1 em diante
+                grad_l2[:, 1:] = (self.regularizador_lambda / m) * self.parametros[:, 1:]
+            else:
+                # Se não tem bias, regulariza a matriz inteira
+                grad_l2 = (self.regularizador_lambda / m) * self.parametros
+                
+            # Soma o gradiente da regularização ao gradiente calculado anteriormente
+            self.d_parametros += grad_l2
         
         #Calcula o gradiente que será repassado para a camada anterior
         self.valor_backward = np.dot(self.parametros.T, delA_delZ)
@@ -129,7 +145,8 @@ class CamadaDensa:
 
     def _atualiza_parametros(self, taxa_aprendizado: float):
         """
-        Depois de fazer o backpropagation damos um passo do gradiente
+        Depois de fazer o backpropagation damos um passo do gradiente. Nossos
+        novos parametros estão guardados em self.d_parametros.
         """
         self.parametros = self.parametros - taxa_aprendizado * self.d_parametros
     

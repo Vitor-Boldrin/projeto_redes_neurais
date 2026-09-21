@@ -16,16 +16,17 @@ class EntropiaCruzada(FuncaoDeCusto):
         self.valor_foward = 0.0
         self.valor_backward = 0.0
 
-    def _foward(self, y_real:np.array, y_pred:np.array):
+    def _foward(self, y_real:np.array, y_pred:np.array, valor_regularizacao:float):
         # da um clip (limita) os valores para log(0) não explodir o note de voces
         epsilon = 1e-15
         y_pred = np.clip(y_pred, epsilon, 1 - epsilon)
         
         # numero de amostras pra calcular a média
-        N = y_real.shape[1]
+        M = y_real.shape[1]
         
         # calcula
-        self.valor_foward = - (1 / N) * np.sum(y_real * np.log(y_pred))
+        self.valor_foward = - (1 / (2*M)) * np.sum(y_real * np.log(y_pred))
+        self.valor_foward = self.valor_foward + valor_regularizacao
         return self.valor_foward
 
     def _backward(self, y_real:np.array, y_pred:np.array):
