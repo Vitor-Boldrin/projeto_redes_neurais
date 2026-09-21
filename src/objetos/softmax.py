@@ -39,6 +39,6 @@ class Softmax(FuncaoAtivacao):
 
         soma_A_dA = np.sum(A_dA, axis=0, keepdims=True)
         
-        self.valor_backward = A_dA - self.saida * soma_A_dA
+        self.valor_backward = A_dA - self.valor_foward * soma_A_dA
         
         return self.valor_backward
