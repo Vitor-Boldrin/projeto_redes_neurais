@@ -70,10 +70,10 @@ class CamadaDensa:
         else:
             self.entrada_epoca = entrada
             
-        # 2. Faz a multiplicação com a variável correta salva
+        # calcula a combinação linear
         soma = np.matmul(self.parametros, self.entrada_epoca)
             
-        # 3. Calcula e guarda a saída
+        # calcla a ativação
         self.valor_foward = self.funcao_de_ativacao._foward(soma) 
         
         return self.valor_foward
