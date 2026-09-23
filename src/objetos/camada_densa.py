@@ -146,7 +146,7 @@ class CamadaDensa:
     def _atualiza_parametros(self, taxa_aprendizado: float):
         """
         Depois de fazer o backpropagation damos um passo do gradiente. Nossos
-        novos parametros estão guardados em self.d_parametros.
+        novos parametros do gradiente descendente estão guardados em self.d_parametros.
         """
         self.parametros = self.parametros - taxa_aprendizado * self.d_parametros
     
