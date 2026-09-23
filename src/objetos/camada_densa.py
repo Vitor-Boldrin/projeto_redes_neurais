@@ -55,24 +55,27 @@ class CamadaDensa:
         else: 
             self.parametros = np.random.uniform(-limite_randomico, limite_randomico, (tamanho_saida, tamanho_entrada))
 
-    def _foward(self,entrada:np.array):
-        self.entrada_epoca = entrada
+    def _foward(self, entrada: np.array):
+        # Trata se tiver o bias
         if self.conter_bias:
-            # Pega o número de colunas da entrada
-            qtd_exemplos = entrada.shape[1]
-            
-            # Cria uma linha de "1s"
-            linha_uns = np.ones((1, qtd_exemplos))
-            
-            # Empilha a linha de 1s em cima da entrada
-            # A entrada de (400, 1) vira (401, 1) (para os dados mnist)
+            #pega o tamanho de m
+            m = entrada.shape[1]
+            # cria uma linha de 1s
+            linha_uns = np.ones((1, m))
+            # coloca em cima das entradas, fazendo a entrada [x1 x2 x3 ...]^T ficar [1 x1 x2 x3 ...]^T para cada entrada x
             entrada_com_bias = np.vstack((linha_uns, entrada))
             
-            soma = np.matmul(self.parametros, entrada_com_bias) # faz a multiplicacao
+            # Salva a entrada JÁ COM O BIAS
+            self.entrada_epoca = entrada_com_bias
         else:
-            soma = np.matmul(self.parametros, entrada)
+            self.entrada_epoca = entrada
             
-        self.valor_foward = self.funcao_de_ativacao._foward(soma) # funcao de ativacao e guarda a saida
+        # 2. Faz a multiplicação com a variável correta salva
+        soma = np.matmul(self.parametros, self.entrada_epoca)
+            
+        # 3. Calcula e guarda a saída
+        self.valor_foward = self.funcao_de_ativacao._foward(soma) 
+        
         return self.valor_foward
 
     def _backward(self, entrada: np.array):
