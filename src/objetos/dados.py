@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 from pandas.errors import ParserError, EmptyDataError
-import random
 
 # TODO LIST
 # [X] Ler aquivos .csv
@@ -31,12 +30,11 @@ class Dados():
         self.pacote_dados = self._ler_dados(caminho_dados)
         self.pacote_rotulos = self._ler_dados(caminho_rotulos)
 
-        self.conjunto_pontos = [[a,b] for a,b in zip(self.pacote_dados, self.pacote_rotulos)]
-        self.numero_pontos = len(self.conjunto_pontos)
+        self.one_hot_rotulos = np.eye(11)[self.pacote_rotulos.reshape(-1)]
 
-        self.conjunto_treinamento = []
-        self.conjunto_validacao = []
-        self.conjunto_teste = []
+        self.conjunto_treinamento = None
+        self.conjunto_validacao = None
+        self.conjunto_teste = None
 
     def _ler_dados(self, caminho):
         """
@@ -45,22 +43,24 @@ class Dados():
             Parametros:
                 - caminho: O caminho do arquivo .csv que será lido.
             Retorna:
-                - dados: Numpy array contendo as informações no arquivo .csv. 
+                - dados: dataframe contendo as informações no arquivo .csv. 
         """
 
         try:
-            dados = pd.read_csv(caminho, thousands=",").to_numpy()
+            dados = pd.read_csv(caminho, decimal=",", header=None).to_numpy()
         except FileNotFoundError:
             print(f"O Arquivo '{caminho}' não foi encontrado.")
         except EmptyDataError:
             print(f"O Arquivo '{caminho}' está vazio.")
 
         return dados
-        
+
     def _holdout(self, *args):
 
-        self.pontos_embaralhados = self.conjunto_pontos.copy()
-        random.shuffle(self.pontos_embaralhados)
+        # Embaralha os dados e os rotulos, 
+        permutacao = np.random.permutation(self.pacote_dados.shape[0])
+        self.dados_embaralhados = self.pacote_dados[permutacao]
+        self.one_hot_rotulos_embaralhados = self.one_hot_rotulos[permutacao]
 
         if len(args) == 0:
 
@@ -71,10 +71,12 @@ class Dados():
             if args[0] >= 1.0:
                 raise ValueError("O tamanho do conjunto de treinamento não pode ultrapassar ou ser igual ao número de pontos.")
 
-            self.conjunto_treinamento = self.pontos_embaralhados[ : int(np.ceil(self.numero_pontos*args[0]))]
-            self.conjunto_validacao = []
-            self.conjunto_teste = self.pontos_embaralhados[int(np.ceil(self.numero_pontos*args[0])) : ]
-            
+            dados_treinamento, dados_teste = np.split(self.dados_embaralhados,[ int(self.dados_embaralhados.shape[0] * args[0])])
+            one_hot_rotulos_treinamento, one_hot_rotulos_teste = np.split(self.one_hot_rotulos_embaralhados, [int(self.one_hot_rotulos_embaralhados.shape[0] * args[0])])
+
+            self.conjunto_treinamento = (dados_treinamento.T, one_hot_rotulos_treinamento.T)
+            self.conjunto_teste = (dados_teste.T, one_hot_rotulos_teste.T)
+
         elif len(args) == 2:
 
             if args[0] >= 1.0:
@@ -84,9 +86,16 @@ class Dados():
             elif args[0] + args[1] >= 1.0:
                 raise ValueError("A soma entre o tamanho do conjunto de treinamento e o tamanho do conjunto de validação não pode ultrapassar ou ser igual ao número de pontos.")
 
-            self.conjunto_treinamento = self.pontos_embaralhados[ : int(np.ceil(self.numero_pontos*args[0]))]
-            self.conjunto_validacao = self.pontos_embaralhados[ int(np.ceil(self.numero_pontos*args[0])) : int(np.ceil(self.numero_pontos*args[0])) + int(np.ceil(self.numero_pontos*args[1]))]
-            self.conjunto_teste = self.pontos_embaralhados[int(np.ceil(self.numero_pontos*args[0])) + int(np.ceil(self.numero_pontos*args[1])) : ]
+            dados_treinamento, resto = np.split(self.dados_embaralhados, [int(self.dados_embaralhados.shape[0] * args[0])])
+            dados_validacao, dados_teste = np.split(resto, [int(resto.shape[0] * args[1])])
+
+            one_hot_rotulos_treinamento, resto = np.split(self.one_hot_rotulos_embaralhados, [int(self.one_hot_rotulos_embaralhados.shape[0] * args[0])])
+            one_hot_rotulos_validacao, one_hot_rotulos_teste = np.split(resto, [int(resto.shape[0] * args[1])])
+
+            self.conjunto_treinamento = (dados_treinamento.T,one_hot_rotulos_treinamento.T)
+            self.conjunto_validacao = (dados_validacao.T,one_hot_rotulos_validacao.T)
+            self.conjunto_teste = (dados_teste.T, one_hot_rotulos_teste.T)
+            
             
         else:
             raise ValueError("Muitos argumentos, era esperado o tamanho do conjunto de treinamento e o tamanho do conjunto de validação.")
