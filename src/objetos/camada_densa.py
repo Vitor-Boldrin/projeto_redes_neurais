@@ -34,7 +34,7 @@ class CamadaDensa:
         self.dimensao_saida = tamanho_saida
         self.entrada = None
         
-        limite_randomico = 5
+        limite_randomico = 0.1
 
         # trata a função de ativação
         if isinstance(funcao_de_ativacao, str):
