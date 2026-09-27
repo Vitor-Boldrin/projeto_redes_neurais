@@ -32,7 +32,9 @@ class Dados():
         self.pacote_dados = self._ler_dados(caminho_dados)
         self.pacote_rotulos = self._ler_dados(caminho_rotulos)
 
-        self.one_hot_rotulos = np.eye(11)[self.pacote_rotulos.reshape(-1)]
+        self.rotulos_originais = self.pacote_rotulos.reshape(-1).astype(int)
+
+        self.one_hot_rotulos = np.eye(10)[self.rotulos_originais - 1]
 
         self.conjunto_treinamento = None
         self.conjunto_validacao = None
@@ -92,11 +94,18 @@ class Dados():
             elif args[0] + args[1] >= 1.0:
                 raise ValueError("A soma entre o tamanho do conjunto de treinamento e o tamanho do conjunto de validação não pode ultrapassar ou ser igual ao número de pontos.")
 
-            dados_treinamento, resto = np.split(self.dados_embaralhados, [int(self.dados_embaralhados.shape[0] * args[0])])
-            dados_validacao, dados_teste = np.split(resto, [int(resto.shape[0] * args[1])])
+            corte1 = int(np.round(self.dados_embaralhados.shape[0] * args[0]))
+            corte2 = int(np.round(self.dados_embaralhados.shape[0] * (args[0] + args[1])))
 
-            one_hot_rotulos_treinamento, resto = np.split(self.one_hot_rotulos_embaralhados, [int(self.one_hot_rotulos_embaralhados.shape[0] * args[0])])
-            one_hot_rotulos_validacao, one_hot_rotulos_teste = np.split(resto, [int(resto.shape[0] * args[1])])
+            #dados_treinamento, resto = np.split(self.dados_embaralhados, [int(self.dados_embaralhados.shape[0] * args[0])])
+            #dados_validacao, dados_teste = np.split(resto, [int(resto.shape[0] * args[1])])
+
+            dados_treinamento, dados_validacao, dados_teste = np.split(self.dados_embaralhados, [corte1, corte2])
+
+            #one_hot_rotulos_treinamento, resto = np.split(self.one_hot_rotulos_embaralhados, [int(self.one_hot_rotulos_embaralhados.shape[0] * args[0])])
+            #one_hot_rotulos_validacao, one_hot_rotulos_teste = np.split(resto, [int(resto.shape[0] * args[1])])
+
+            one_hot_rotulos_treinamento, one_hot_rotulos_validacao, one_hot_rotulos_teste  = np.split(self.one_hot_rotulos_embaralhados, [corte1, corte2])
 
             self.conjunto_treinamento = (dados_treinamento.T,one_hot_rotulos_treinamento.T)
             self.conjunto_validacao = (dados_validacao.T,one_hot_rotulos_validacao.T)

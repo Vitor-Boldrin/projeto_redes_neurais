@@ -15,7 +15,7 @@ class CamadaDensa:
         possui o atributo:
             parametros (np.array mxn)
         métodos:
-            _foward (np.array mx1)->float recebe uma entrada e
+            _forward (np.array mx1)->float recebe uma entrada e
             multiplica pelos parametros. Depois aplica
             a função de ativação e retorna o valor
     """
@@ -25,7 +25,7 @@ class CamadaDensa:
                 }
 
         self.conter_bias = conter_bias
-        self.valor_foward = 0.0
+        self.valor_forward = 0.0
         self.valor_backward = 0.0
         self.regularizador_lambda = regularizador_lambda
         
@@ -55,7 +55,7 @@ class CamadaDensa:
         else: 
             self.parametros = np.random.uniform(-limite_randomico, limite_randomico, (tamanho_saida, tamanho_entrada))
 
-    def _foward(self, entrada: np.array):
+    def _forward(self, entrada: np.array):
         # Trata se tiver o bias
         if self.conter_bias:
             #pega o tamanho de m
@@ -74,9 +74,9 @@ class CamadaDensa:
         soma = np.matmul(self.parametros, self.entrada_epoca)
             
         # calcla a ativação
-        self.valor_foward = self.funcao_de_ativacao._foward(soma) 
+        self.valor_forward = self.funcao_de_ativacao._forward(soma) 
         
-        return self.valor_foward
+        return self.valor_forward
 
     def _backward(self, entrada: np.array):
         """
@@ -98,7 +98,7 @@ class CamadaDensa:
 
         delJ/delTheta = delJ/delZ delZ/delTheta
 
-        já que Z = Theta*X^T -> delZ/delTheta = X = self.entrada_epoca [é o valor que foi passado por aqui durante o _foward]
+        já que Z = Theta*X^T -> delZ/delTheta = X = self.entrada_epoca [é o valor que foi passado por aqui durante o _forward]
 
         daí 
 

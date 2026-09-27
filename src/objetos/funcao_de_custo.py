@@ -6,7 +6,7 @@ class FuncaoDeCusto(ABC):
     """
     Classe mãe para todas as funções de custo. Todas
     DEVEM herdar dessa classe forçando ter o atributo saida
-    e os métodos _foward e _backward
+    e os métodos _forward e _backward
     """
     def __init__(self):
         self.saida = 0.0

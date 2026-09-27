@@ -58,14 +58,14 @@ class RedeNeural:
             raise TypeError("As dimensões de entrada não são compatíveis com a da rede neural")
 
         # calcula a primeira camada
-        saida = self.camadas[0]._foward(entrada)
+        saida = self.camadas[0]._forward(entrada)
 
         # Se ela só tinha uma camada, então retorna já
         if len(self.camadas) == 1:
             return saida
 
         for camada in self.camadas[1:]:
-            saida = camada._foward(saida)
+            saida = camada._forward(saida)
 
         return saida
 
@@ -112,7 +112,7 @@ class RedeNeural:
         """
         Junta as funções e faz o treinamento
         define as épocas que são quantas vezes será iterado
-        IMPORTANTE avalia a rede antes de treinar, para atualizar todos os valores de foward na rede inteira.
+        IMPORTANTE avalia a rede antes de treinar, para atualizar todos os valores de forward na rede inteira.
 
         Aqui a gente pode passar o lambda da regularização também
 
