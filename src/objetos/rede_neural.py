@@ -1,5 +1,6 @@
 from .camada_densa import CamadaDensa
 import numpy as np
+import pandas as pd
 from .dados import Dados
 from .entropia_cruzada import EntropiaCruzada 
 from .funcao_de_custo import FuncaoDeCusto
@@ -107,7 +108,7 @@ class RedeNeural:
         for camada in self.camadas:
             camada._atualiza_parametros(taxa_aprendizado)
 
-    def treinar(self, X: np.array, y_real: np.array, epocas: int, taxa_aprendizado: float, regularizador_lambda = None):
+    def treinar(self, epocas: int, taxa_aprendizado: float, conjunto_treinamento, conjunto_validacao = None, regularizador_lambda = None):
         """
         Junta as funções e faz o treinamento
         define as épocas que são quantas vezes será iterado
@@ -125,12 +126,48 @@ class RedeNeural:
             for c in self.camadas:
                 c.regularizador_lambda = self.regularizador_lambda
 
-        for epoca in range(epocas):
-            # roda a rede
-            y_pred = self._avalia(X)
+        x_treino = conjunto_treinamento[0]
+        y_treino = conjunto_treinamento[1]
 
-            # calcula o custo
-            custo = self._calcula_custo(y_real, y_pred)
+        if conjunto_validacao != None:
+            x_validacao = conjunto_validacao[0]
+            y_validacao = conjunto_validacao[1]
 
-            # faz o backpropagation (que já atualiza os parâmetros)
-            self._backpropagation(y_real, y_pred, taxa_aprendizado)
+            logs = pd.DataFrame(columns=["epoca","custo_treino","custo_validacao"])
+            logs.to_csv("logs.csv", index=False)
+
+            for epoca in range(epocas):            
+                y_pred = self._avalia(x_treino)
+                self._backpropagation(y_treino, y_pred, taxa_aprendizado)
+    
+                custo_treino = self._calcula_custo(y_treino, y_pred)
+    
+                y_pred_validacao = self._avalia(x_validacao)
+                custo_validacao = self._calcula_custo(y_validacao, y_pred_validacao)
+
+                self.log_epoca = {
+                    "epoca": epoca,
+                    "custo_treino":[custo_treino],
+                    "custo_validacao": [custo_validacao] 
+                }
+
+                log = pd.DataFrame(self.log_epoca)
+                log.to_csv("logs.csv",mode="a",index=False,header=None)
+        else:
+
+            logs = pd.DataFrame(columns=["epoca","custo_treino"])
+            logs.to_csv("logs.csv", index=False)
+
+            for epoca in range(epocas):            
+                y_pred = self._avalia(x_treino)
+                self._backpropagation(y_treino, y_pred, taxa_aprendizado)
+    
+                custo_treino = self._calcula_custo(y_treino, y_pred)
+
+                self.log_epoca = {
+                    "epoca": epoca,
+                    "custo_treino":[custo_treino],
+                }
+                
+                log = pd.DataFrame(self.log_epoca)
+                log.to_csv("logs.csv",mode="a",index=False,header=None)

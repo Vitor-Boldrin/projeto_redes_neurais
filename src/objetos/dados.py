@@ -59,6 +59,10 @@ class Dados():
 
     def _holdout(self, *args):
 
+        self.conjunto_treinamento = None
+        self.conjunto_validacao = None
+        self.conjunto_teste = None
+
         # Embaralha os dados e os rotulos, 
         permutacao = np.random.permutation(self.pacote_dados.shape[0])
         self.dados_embaralhados = self.pacote_dados[permutacao]

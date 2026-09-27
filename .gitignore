@@ -20,3 +20,5 @@ Thumbs.db
 # Arquivos teste
 test*.*
 test.py
+
+logs.csv
