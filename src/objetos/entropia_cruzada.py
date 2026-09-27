@@ -25,7 +25,8 @@ class EntropiaCruzada(FuncaoDeCusto):
         M = y_real.shape[1]
         
         # calcula
-        self.valor_forward = - (1 / (2*M)) * np.sum(y_real * np.log(y_pred))
+        #self.valor_forward = - (1 / (2*M)) * np.sum(y_real * np.log(y_pred))
+        self.valor_forward = - (1 / (M)) * np.sum(y_real * np.log(y_pred))
 
         self.valor_forward = self.valor_forward + valor_regularizacao
         return self.valor_forward
@@ -41,6 +42,7 @@ class EntropiaCruzada(FuncaoDeCusto):
         N = y_real.shape[1]
         
         # A derivada da função custo
-        self.valor_backward = - (1 / N) * (y_real / y_pred)
+        #self.valor_backward = - (1 / N) * (y_real / y_pred)
+        self.valor_backward = - (y_real / y_pred) + ((1 - y_real) / (1 - y_pred))
         
         return self.valor_backward

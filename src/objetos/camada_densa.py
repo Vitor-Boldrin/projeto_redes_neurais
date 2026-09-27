@@ -94,7 +94,7 @@ class CamadaDensa:
 
         então conseguimos calcular delJ/delZ, com ele
 
-        queremos agora (o sonhado gradiente)
+        queremos agora (oa sonhado gradiente)
 
         delJ/delTheta = delJ/delZ delZ/delTheta
 
