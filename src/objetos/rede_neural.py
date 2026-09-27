@@ -117,7 +117,7 @@ class RedeNeural:
         Aqui a gente pode passar o lambda da regularização também
 
         TO DO
-        [ ] GERAR LOGS DE TREINAMENTO
+        [X] GERAR LOGS DE TREINAMENTO
         """
         self.regularizador_lambda = regularizador_lambda
 
