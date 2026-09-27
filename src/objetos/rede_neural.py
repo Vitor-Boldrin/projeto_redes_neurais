@@ -88,7 +88,7 @@ class RedeNeural:
             valor_regularizacao = (self.regularizador_lambda / (2 * M)) * valor_regularizacao
 
         # Chama a função de custo de que foi definida
-        self.valor_custo = self._funcao_de_custo.forward(y_real, y_pred, valor_regularizacao)
+        self.valor_custo = self._funcao_de_custo._forward(y_real, y_pred, valor_regularizacao)
 
         return self.valor_custo
 

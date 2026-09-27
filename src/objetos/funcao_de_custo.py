@@ -12,7 +12,7 @@ class FuncaoDeCusto(ABC):
         self.saida = 0.0
 
     @abstractmethod
-    def _foward(self, entrada: np.array):
+    def _forward(self, entrada: np.array):
         pass
 
     @abstractmethod

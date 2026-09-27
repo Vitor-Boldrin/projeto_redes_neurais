@@ -13,6 +13,8 @@ from pandas.errors import ParserError, EmptyDataError
 # então Y = matriz 10x100 {classes}x{m}
 # e X = matriz 400x100 
 
+# Feito - Marcelo J.
+
 class Dados():
     """
     A classe Dados armazena e manipula os nossos dados.
