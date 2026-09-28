@@ -93,7 +93,7 @@ class RedeNeural:
 
         return self.valor_custo
 
-    def _backpropagation(self, y_real: np.array, y_pred: np.array, taxa_aprendizado: float):
+    def _backpropagation(self, y_real: np.array, y_pred: np.array, taxa_aprendizado: float, atualizar_pesos = True):
         """
         Faz o backpropagation uma vez e depois atualiza os thetas das camadas
         """
@@ -105,10 +105,49 @@ class RedeNeural:
             backward = camada._backward(backward)
 
         # atualiza os parametros
-        for camada in self.camadas:
-            camada._atualiza_parametros(taxa_aprendizado)
+        if atualizar_pesos:
+            for camada in self.camadas:
+                camada._atualiza_parametros(taxa_aprendizado)
 
-    def treinar(self, epocas: int, taxa_aprendizado: float, conjunto_treinamento, conjunto_validacao = None, regularizador_lambda = None):
+    def _erro_gradiente_aproximado(self, X ,Y):
+        eps = 10e-4
+        gradientes = []
+        gradientes_aprox = []
+
+        for camada in self.camada:
+            gradientes.append(camada.d_parametros.flatten())
+
+        gradientes_concat = np.concatenate(gradientes)
+        gradientes_aprox_concat = np.zeros_like(gradientes_concat)
+
+        idx_atual = 0
+
+        for camada in self.camadas:
+            for idx, valor in np.ndenumerate(camada.parametros):
+                camada.parametros[idx] = valor + eps
+                y_mais = self._avalia(X)
+                custo_mais = self._calcula_custo(Y, y_mais)
+
+                camada.parametros[idx] = valor - eps
+                y_menos = self._avalia(X)
+                custo_menos = self._calcula_custo(y,y_menos)
+
+                camada.parametros[idx] = valor
+
+                gradiente_calculado = (custo_mais - custo_menos) / (2 * eps)
+                gradientes_aprox_concat[idx_atual] = gradiente_calculado
+                idx_atual += 1
+
+        norma_gradiente_gradiente_aprox = np.linalg.norm(gradientes_concat - gradientes_aprox_concat)
+
+        if norma_gradiente_gradiente_aprox == 0:
+            diferenca = 0.0
+        else :
+            diferenca = norma_gradiente_gradiente_aprox/(np.linalg.norm(gradientes_concat) + np.linalg.norm(gradientes_aprox_concat))
+        return diferenca
+
+
+    def treinar(self, epocas: int, taxa_aprendizado: float, conjunto_treinamento, conjunto_validacao = None, regularizador_lambda = None, verificacao_gradiente = False):
         """
         Junta as funções e faz o treinamento
         define as épocas que são quantas vezes será iterado
@@ -138,9 +177,15 @@ class RedeNeural:
 
             for epoca in range(epocas):            
                 y_pred = self._avalia(x_treino)
-                self._backpropagation(y_treino, y_pred, taxa_aprendizado)
-    
                 custo_treino = self._calcula_custo(y_treino, y_pred)
+                self._backpropagation(y_treino, y_pred, taxa_aprendizado)
+
+                if verificacao_gradiente:
+                    diferenca = self._erro_gradiente_aproximado(x_treino,y_treino)
+                    if diferenca < 1e-7:
+                        print("Backpropagation Correto")
+                    else:
+                        print("Algo de errado no backpropagation")
     
                 y_pred_validacao = self._avalia(x_validacao)
                 custo_validacao = self._calcula_custo(y_validacao, y_pred_validacao)
@@ -160,10 +205,16 @@ class RedeNeural:
 
             for epoca in range(epocas):            
                 y_pred = self._avalia(x_treino)
-                self._backpropagation(y_treino, y_pred, taxa_aprendizado)
-    
                 custo_treino = self._calcula_custo(y_treino, y_pred)
+                self._backpropagation(y_treino, y_pred, taxa_aprendizado)
 
+                if verificacao_gradiente:
+                    diferenca = self._erro_gradiente_aproximado(x_treino,y_treino)
+                    if diferenca < 1e-7:
+                        print("Backpropagation Correto")
+                    else:
+                        print("Algo de errado no backpropagation")
+                
                 self.log_epoca = {
                     "epoca": epoca,
                     "custo_treino":[custo_treino],

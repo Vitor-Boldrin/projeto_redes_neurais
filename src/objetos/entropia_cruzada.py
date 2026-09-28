@@ -42,7 +42,6 @@ class EntropiaCruzada(FuncaoDeCusto):
         N = y_real.shape[1]
         
         # A derivada da função custo
-        #self.valor_backward = - (1 / N) * (y_real / y_pred)
-        self.valor_backward = - (y_real / y_pred) + ((1 - y_real) / (1 - y_pred))
+        self.valor_backward = - (y_real / y_pred)
         
         return self.valor_backward

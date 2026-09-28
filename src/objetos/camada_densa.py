@@ -1,5 +1,6 @@
 import numpy as np
 from .sigmoid import Sigmoid
+from .softmax import Softmax
 from .funcao_ativacao import FuncaoAtivacao
 
 # TO DO:
@@ -21,7 +22,8 @@ class CamadaDensa:
     """
     def __init__(self,tamanho_entrada:int,tamanho_saida:int,funcao_de_ativacao='sigmoid', conter_bias=True, regularizador_lambda=None):
         CLASSES_DE_ATIVACAO = {
-                    'entropia_cruzada': Sigmoid
+                    'sigmoid': Sigmoid,
+                    'softmax': Softmax
                 }
 
         self.conter_bias = conter_bias
@@ -52,6 +54,7 @@ class CamadaDensa:
             # Se tem bias a matriz de parâmetros ganha uma coluna a mais
             # O shape passa a ser (tamanho_saida, tamanho_entrada + 1)
             self.parametros = np.random.uniform(-limite_randomico, limite_randomico, (tamanho_saida, tamanho_entrada + 1))
+
         else: 
             self.parametros = np.random.uniform(-limite_randomico, limite_randomico, (tamanho_saida, tamanho_entrada))
 

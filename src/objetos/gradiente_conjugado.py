@@ -44,7 +44,7 @@ class GradienteConjugado:
         custo = self.rede._calcula_custo(y_real, y_prev)
 
         #Backpropagation
-        self.rede._backpropagation(entrada, y_real, y_prev, atualizar_pesos=False)
+        self.rede._backpropagation(y_real, y_prev, taxa_aprendizado=0.0, atualizar_pesos=False)
 
         gradiente_1d = self._vetorizar_gradiente()
 
