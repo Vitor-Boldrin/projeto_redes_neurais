@@ -114,7 +114,7 @@ class RedeNeural:
         gradientes = []
         gradientes_aprox = []
 
-        for camada in self.camada:
+        for camada in self.camadas:
             gradientes.append(camada.d_parametros.flatten())
 
         gradientes_concat = np.concatenate(gradientes)
@@ -124,15 +124,15 @@ class RedeNeural:
 
         for camada in self.camadas:
             for idx, valor in np.ndenumerate(camada.parametros):
-                camada.parametros[idx] = valor + eps
+                camada.parametros[idx] = float(valor) + eps
                 y_mais = self._avalia(X)
                 custo_mais = self._calcula_custo(Y, y_mais)
 
-                camada.parametros[idx] = valor - eps
+                camada.parametros[idx] = float(valor) - eps
                 y_menos = self._avalia(X)
-                custo_menos = self._calcula_custo(y,y_menos)
+                custo_menos = self._calcula_custo(Y,y_menos)
 
-                camada.parametros[idx] = valor
+                camada.parametros[idx] = float(valor)
 
                 gradiente_calculado = (custo_mais - custo_menos) / (2 * eps)
                 gradientes_aprox_concat[idx_atual] = gradiente_calculado
@@ -184,8 +184,10 @@ class RedeNeural:
                     diferenca = self._erro_gradiente_aproximado(x_treino,y_treino)
                     if diferenca < 1e-7:
                         print("Backpropagation Correto")
+                        print(diferenca)
                     else:
                         print("Algo de errado no backpropagation")
+                        print(diferenca)
     
                 y_pred_validacao = self._avalia(x_validacao)
                 custo_validacao = self._calcula_custo(y_validacao, y_pred_validacao)
@@ -212,8 +214,10 @@ class RedeNeural:
                     diferenca = self._erro_gradiente_aproximado(x_treino,y_treino)
                     if diferenca < 1e-7:
                         print("Backpropagation Correto")
+                        print(diferenca)
                     else:
                         print("Algo de errado no backpropagation")
+                        print(diferenca)
                 
                 self.log_epoca = {
                     "epoca": epoca,

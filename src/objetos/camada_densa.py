@@ -122,7 +122,7 @@ class CamadaDensa:
         m = self.entrada_epoca.shape[1]
         
         # Calcula o gradiente dos parâmetros (DeJ/DelTheta)
-        self.d_parametros = (1 / m) * np.dot(delA_delZ, self.entrada_epoca.T)
+        self.d_parametros = np.dot(delA_delZ, self.entrada_epoca.T)
 
         # se nós temos regularizador a função fica W = W - alfa * (dW + lambda/m * W)
         if not(self.regularizador_lambda is None):

@@ -20,7 +20,7 @@ class Dados():
     A classe Dados armazena e manipula os nossos dados.
     """
 
-    def __init__(self, caminho_dados, caminho_rotulos):
+    def __init__(self, caminho_dados, caminho_rotulos, numero_classes = 10):
         """
             Realiza a leitura dos nossos dados e seus respectivos rotúlos.
 
@@ -31,10 +31,10 @@ class Dados():
 
         self.pacote_dados = self._ler_dados(caminho_dados)
         self.pacote_rotulos = self._ler_dados(caminho_rotulos)
-
+        self.numero_classes = numero_classes
         self.rotulos_originais = self.pacote_rotulos.reshape(-1).astype(int)
 
-        self.one_hot_rotulos = np.eye(10)[self.rotulos_originais - 1]
+        self.one_hot_rotulos = np.eye(numero_classes)[self.rotulos_originais - 1]
 
         self.conjunto_treinamento = None
         self.conjunto_validacao = None
