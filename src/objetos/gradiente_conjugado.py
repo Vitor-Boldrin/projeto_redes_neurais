@@ -73,3 +73,10 @@ class GradienteConjugado:
         self._desvetorizar(resultado.x)
         print(f"Treinamento concluído. Sucesso: {resultado.success}. Motivo: {resultado.message}")
 
+        y_previsto_final = self.rede._avalia(entrada)
+        print("\n================================")
+        print(y_previsto_final)
+        print("================================\n")
+
+        print(resultado.fun)
+
