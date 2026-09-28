@@ -110,7 +110,7 @@ class RedeNeural:
                 camada._atualiza_parametros(taxa_aprendizado)
 
     def _erro_gradiente_aproximado(self, X ,Y):
-        eps = 10e-4
+        eps = 1e-4
         gradientes = []
         gradientes_aprox = []
 
@@ -181,13 +181,20 @@ class RedeNeural:
                 self._backpropagation(y_treino, y_pred, taxa_aprendizado)
 
                 if verificacao_gradiente:
-                    diferenca = self._erro_gradiente_aproximado(x_treino,y_treino)
+
+                    self._backpropagation(y_treino, y_pred, taxa_aprendizado, atualizar_pesos=False)
+
+                    diferenca = self._erro_gradiente_aproximado(x_treino, y_treino)
                     if diferenca < 1e-7:
                         print("Backpropagation Correto")
-                        print(diferenca)
                     else:
                         print("Algo de errado no backpropagation")
-                        print(diferenca)
+                    print(diferenca)
+
+                    for camada in self.camadas:
+                        camada._atualiza_parametros(taxa_aprendizado)
+                else:
+                    self._backpropagation(y_treino, y_pred, taxa_aprendizado)
     
                 y_pred_validacao = self._avalia(x_validacao)
                 custo_validacao = self._calcula_custo(y_validacao, y_pred_validacao)
@@ -208,16 +215,21 @@ class RedeNeural:
             for epoca in range(epocas):            
                 y_pred = self._avalia(x_treino)
                 custo_treino = self._calcula_custo(y_treino, y_pred)
-                self._backpropagation(y_treino, y_pred, taxa_aprendizado)
 
                 if verificacao_gradiente:
-                    diferenca = self._erro_gradiente_aproximado(x_treino,y_treino)
+                    self._backpropagation(y_treino, y_pred, taxa_aprendizado, atualizar_pesos=False)
+
+                    diferenca = self._erro_gradiente_aproximado(x_treino, y_treino)
                     if diferenca < 1e-7:
                         print("Backpropagation Correto")
-                        print(diferenca)
                     else:
                         print("Algo de errado no backpropagation")
-                        print(diferenca)
+                    print(diferenca)
+
+                    for camada in self.camadas:
+                        camada._atualiza_parametros(taxa_aprendizado)
+                else:
+                    self._backpropagation(y_treino, y_pred, taxa_aprendizado)
                 
                 self.log_epoca = {
                     "epoca": epoca,
