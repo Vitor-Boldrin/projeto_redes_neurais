@@ -22,3 +22,4 @@ test*.*
 test.py
 
 logs.csv
+log_treinamento.csv

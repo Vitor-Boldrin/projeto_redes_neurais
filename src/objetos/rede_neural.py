@@ -2,6 +2,7 @@ from .camada_densa import CamadaDensa
 import numpy as np
 import pandas as pd
 from .dados import Dados
+from .log import Log
 from .entropia_cruzada import EntropiaCruzada 
 from .funcao_de_custo import FuncaoDeCusto
 
@@ -135,16 +136,9 @@ class RedeNeural:
                 camada.parametros[idx] = float(valor)
 
                 gradiente_calculado = (custo_mais - custo_menos) / (2 * eps)
-                gradientes_aprox_concat[idx_atual] = gradiente_calculado
+                self.log._adicionar_log("gradiente_aproximado",gradiente_calculado)
+
                 idx_atual += 1
-
-        norma_gradiente_gradiente_aprox = np.linalg.norm(gradientes_concat - gradientes_aprox_concat)
-
-        if norma_gradiente_gradiente_aprox == 0:
-            diferenca = 0.0
-        else :
-            diferenca = norma_gradiente_gradiente_aprox/(np.linalg.norm(gradientes_concat) + np.linalg.norm(gradientes_aprox_concat))
-        return diferenca
 
 
     def treinar(self, epocas: int, taxa_aprendizado: float, conjunto_treinamento, conjunto_validacao = None, regularizador_lambda = None, verificacao_gradiente = False):
@@ -168,28 +162,25 @@ class RedeNeural:
         x_treino = conjunto_treinamento[0]
         y_treino = conjunto_treinamento[1]
 
+        self.log = Log()
+
         if conjunto_validacao != None:
             x_validacao = conjunto_validacao[0]
             y_validacao = conjunto_validacao[1]
 
-            logs = pd.DataFrame(columns=["epoca","custo_treino","custo_validacao"])
-            logs.to_csv("logs.csv", index=False)
 
             for epoca in range(epocas):            
+                self.log._adicionar_log("epoca",epoca)
+
                 y_pred = self._avalia(x_treino)
                 custo_treino = self._calcula_custo(y_treino, y_pred)
-                self._backpropagation(y_treino, y_pred, taxa_aprendizado)
+                self.log._adicionar_log("custo_treinamento",custo_treino)
 
                 if verificacao_gradiente:
 
                     self._backpropagation(y_treino, y_pred, taxa_aprendizado, atualizar_pesos=False)
 
-                    diferenca = self._erro_gradiente_aproximado(x_treino, y_treino)
-                    if diferenca < 1e-7:
-                        print("Backpropagation Correto")
-                    else:
-                        print("Algo de errado no backpropagation")
-                    print(diferenca)
+                    self._erro_gradiente_aproximado(x_treino, y_treino)
 
                     for camada in self.camadas:
                         camada._atualiza_parametros(taxa_aprendizado)
@@ -198,43 +189,24 @@ class RedeNeural:
     
                 y_pred_validacao = self._avalia(x_validacao)
                 custo_validacao = self._calcula_custo(y_validacao, y_pred_validacao)
+                self.log._adicionar_log("custo_validacao",custo_validacao)
 
-                self.log_epoca = {
-                    "epoca": epoca,
-                    "custo_treino":[custo_treino],
-                    "custo_validacao": [custo_validacao] 
-                }
-
-                log = pd.DataFrame(self.log_epoca)
-                log.to_csv("logs.csv",mode="a",index=False,header=None)
+                self.log._salvar()
+                
         else:
-
-            logs = pd.DataFrame(columns=["epoca","custo_treino"])
-            logs.to_csv("logs.csv", index=False)
-
-            for epoca in range(epocas):            
+            for epoca in range(epocas):
+                self.log._adicionar_log("epoca", epoca)      
                 y_pred = self._avalia(x_treino)
                 custo_treino = self._calcula_custo(y_treino, y_pred)
+                self.log._adicionar_log("custo_treinamento",custo_treino)
 
                 if verificacao_gradiente:
                     self._backpropagation(y_treino, y_pred, taxa_aprendizado, atualizar_pesos=False)
 
-                    diferenca = self._erro_gradiente_aproximado(x_treino, y_treino)
-                    if diferenca < 1e-7:
-                        print("Backpropagation Correto")
-                    else:
-                        print("Algo de errado no backpropagation")
-                    print(diferenca)
+                    self._erro_gradiente_aproximado(x_treino, y_treino)
 
                     for camada in self.camadas:
                         camada._atualiza_parametros(taxa_aprendizado)
                 else:
                     self._backpropagation(y_treino, y_pred, taxa_aprendizado)
                 
-                self.log_epoca = {
-                    "epoca": epoca,
-                    "custo_treino":[custo_treino],
-                }
-                
-                log = pd.DataFrame(self.log_epoca)
-                log.to_csv("logs.csv",mode="a",index=False,header=None)
