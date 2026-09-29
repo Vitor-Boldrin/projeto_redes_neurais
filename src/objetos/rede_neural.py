@@ -280,6 +280,8 @@ class RedeNeural:
                 y_pred = self._avalia(x_treino)
                 custo_treino = self._calcula_custo(y_treino, y_pred)
                 self.log._adicionar_log("custo_treinamento",custo_treino)
+                custo_treino_sem_reg = self._calcula_custo_sem_reg(y_treino, y_pred)
+                self.log._adicionar_log("custo_treino_sem_reg",custo_treino_sem_reg)
 
                 if verificacao_gradiente:
                     self._backpropagation(y_treino, y_pred, taxa_aprendizado, atualizar_pesos=False)
