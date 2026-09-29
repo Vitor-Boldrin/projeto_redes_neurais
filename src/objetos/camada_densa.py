@@ -122,12 +122,12 @@ class CamadaDensa:
         m = self.entrada_epoca.shape[1]
         
         # Calcula o gradiente dos parâmetros (DeJ/DelTheta)
-        self.d_parametros = np.dot(delA_delZ, self.entrada_epoca.T)
+        self.d_parametros = np.dot(delA_delZ, self.entrada_epoca.T).astype(np.float64)
 
         # se nós temos regularizador a função fica W = W - alfa * (dW + lambda/m * W)
         if not(self.regularizador_lambda is None):
             # Cria uma matriz de zeros no exato formato de self.parametros para fazer as operações
-            grad_l2 = np.zeros_like(self.parametros)
+            grad_l2 = np.zeros_like(self.parametros, dtype=np.float64)
             
             if self.conter_bias: # NÃO REGULARIZAMOS O BIAS!!!!
                 # Como o bias é a coluna 0 aplicamos a regularização apenas nas colunas de 1 em diante

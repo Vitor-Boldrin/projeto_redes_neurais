@@ -35,6 +35,7 @@ class EntropiaCruzada(FuncaoDeCusto):
         """
         bakward, só pegar a derivada da entropia cruzada 
         """
+        #epsilon = 1e-15
         epsilon = 1e-15
         y_pred = np.clip(y_pred, epsilon, 1 - epsilon)
         

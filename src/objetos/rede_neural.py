@@ -81,9 +81,9 @@ class RedeNeural:
             for camada in self.camadas:
                 if camada.conter_bias:
                     # Ignora a coluna 0 (BIAS) somando do indice 1 em diante
-                    valor_regularizacao += np.sum(camada.parametros[:, 1:] ** 2)
+                    valor_regularizacao += np.sum(camada.parametros[:, 1:] ** 2, dtype=np.float64)
                 else:
-                    valor_regularizacao += np.sum(camada.parametros ** 2)
+                    valor_regularizacao += np.sum(camada.parametros ** 2, dtype=np.float64)
             
             # Depois de somar tudo multiplica por lambda/2M 
             M = y_real.shape[1]
@@ -95,11 +95,11 @@ class RedeNeural:
         return self.valor_custo
 
     def _calcula_custo_sem_reg(self, y_real: np.array, y_pred: np.array):
-            valor_regularizacao = 0.0
-            # Chama a função de custo de que foi definida
-            self.valor_custo = self._funcao_de_custo._forward(y_real, y_pred, valor_regularizacao)
-    
-            return self.valor_custo
+        valor_regularizacao = 0.0
+        # Chama a função de custo de que foi definida
+        self.valor_custo = self._funcao_de_custo._forward(y_real, y_pred, valor_regularizacao)
+
+        return self.valor_custo
 
     def _backpropagation(self, y_real: np.array, y_pred: np.array, taxa_aprendizado: float, atualizar_pesos = True):
         """
@@ -116,6 +116,57 @@ class RedeNeural:
         if atualizar_pesos:
             for camada in self.camadas:
                 camada._atualiza_parametros(taxa_aprendizado)
+
+#    def _gradiente_aproximado(self, X ,Y, taxa_aprendizado):
+#        eps = 1e-4
+#        
+#        gradientes_aprox = []
+#        gradientes = []
+#
+#        for camada in self.camadas:
+#            gradientes.append(camada.d_parametros.flatten())
+#
+#        gradientes_concat = np.concatenate(gradientes)
+#        gradientes_aprox_concat = np.zeros_like(gradientes_concat)
+#        
+#        idx_atual = 0
+#        for camada in self.camadas:
+#            for idx, valor in np.ndenumerate(camada.parametros):
+#                gradiente_aprox_camada = np.zeros_like(camada.parametros)
+#                camada.parametros[idx] = float(valor) + eps
+#                y_mais = self._avalia(X)
+#                custo_mais = self._calcula_custo(Y, y_mais)
+#
+#                camada.parametros[idx] = float(valor) - eps
+#                y_menos = self._avalia(X)
+#                custo_menos = self._calcula_custo(Y,y_menos)
+#
+#                camada.parametros[idx] = float(valor)
+#
+#                gradiente_calculado = (custo_mais - custo_menos) / (2 * eps)
+#
+#                gradiente_aprox_camada[idx] = np.zeros_like(camada.parametros)[idx] = gradiente_calculado 
+#                gradientes_aprox_concat[idx_atual] = gradiente_calculado
+#                idx_atual += 1
+#            gradientes_aprox.append(gradiente_aprox_camada)
+#        
+#        for idx, camada in enumerate(self.camadas):
+#            camada.parametros -= taxa_aprendizado * gradientes_aprox[idx]
+#
+#        y_pred_aprox = self._avalia(X)
+#        custo_aprx = self._calcula_custo(Y,y_pred_aprox)
+#        self.log._adicionar_log("gradiente_aproximado",custo_aprx)
+#
+#        for idx, camada in enumerate(self.camadas):
+#            camada.parametros += taxa_aprendizado * gradientes_aprox[idx]
+#
+#        norma_gradiente_gradiente_aprx = np.linalg.norm(gradientes_concat - gradientes_aprox_concat)
+#
+#        if norma_gradiente_gradiente_aprx == 0.0:
+#            self.log._adicionar_log("difereca_gradiente",0.0)
+#        else:
+#            diferenca = norma_gradiente_gradiente_aprx/(np.linalg.norm(gradientes_concat) + np.linalg.norm(gradientes_aprox_concat))
+#            self.log._adicionar_log("difereca_gradiente",diferenca)
 
     def _gradiente_aproximado(self, X ,Y, taxa_aprendizado):
         eps = 1e-4
@@ -167,7 +218,6 @@ class RedeNeural:
         else:
             diferenca = norma_gradiente_gradiente_aprx/(np.linalg.norm(gradientes_concat) + np.linalg.norm(gradientes_aprox_concat))
             self.log._adicionar_log("difereca_gradiente",diferenca)
-
 
     def treinar(self, epocas: int, taxa_aprendizado: float, conjunto_treinamento, conjunto_validacao = None, regularizador_lambda = None, verificacao_gradiente = False):
         """
