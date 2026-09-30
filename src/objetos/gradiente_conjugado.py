@@ -40,7 +40,6 @@ class GradienteConjugado:
 
         #Forward propagation
         y_prev = self.rede._avalia(entrada)
-        print(y_prev.shape)
         custo = self.rede._calcula_custo(y_real, y_prev)
 
         #Backpropagation
@@ -79,4 +78,6 @@ class GradienteConjugado:
         print("================================\n")
 
         print(resultado.fun)
+
+        return resultado.fun
 
